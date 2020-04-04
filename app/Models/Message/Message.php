@@ -11,16 +11,19 @@ class Message extends Model {
 
 	/**
 	 * Получение предпоследнего сообщения, используется, чтобы получить дату
+	 *
 	 * @param int $user
 	 * @param int $chat
 	 * @return null|stdClass
 	 */
 	public function lastMessage (int $user, int $chat) :? stdClass {
-		return DB::table('chats')->where('user_id', $user)->where('chat_id', $chat)->latest('id_chat')->skip(1)->limit(1)->first();
+		return DB::table('chats')->where('user_id', $user)->where('chat_id',
+			$chat)->latest('id_chat')->skip(1)->limit(1)->first();
 	}
 
 	/**
 	 * Подсчет всех сообщений
+	 *
 	 * @param int $user
 	 * @param int $chat
 	 * @return int
@@ -31,6 +34,7 @@ class Message extends Model {
 
 	/**
 	 * Получить n - количество сообщений
+	 *
 	 * @param int $user
 	 * @param int $chat
 	 * @param int $limit
@@ -43,6 +47,7 @@ class Message extends Model {
 
 	/**
 	 * Запись сообщений в бд, записывает только сообщения, не команды!
+	 *
 	 * @param int    $user
 	 * @param int    $chat
 	 * @param string $nickname

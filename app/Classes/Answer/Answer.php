@@ -8,6 +8,7 @@ class Answer {
 
 	/**
 	 * Отправка сообщений
+	 *
 	 * @param int    $chatId
 	 * @param string $text
 	 * @param bool   $start
@@ -30,8 +31,8 @@ class Answer {
 		}
 		else
 			$url = "https://api.telegram.org/bot" . self::TOKEN . "/sendMessage?" . http_build_query([
-					'chat_id'      => $chatId,
-					'text'         => $text
+					'chat_id' => $chatId,
+					'text'    => $text
 				]);
 
 		$curl = curl_init($url);

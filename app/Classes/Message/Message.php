@@ -15,10 +15,10 @@ class Message {
 	protected $Date;
 
 	public function __construct (int $user, int $chat) {
-		$this->user = $user;
-		$this->chat = $chat;
+		$this->user         = $user;
+		$this->chat         = $chat;
 		$this->ModelMessage = new ModelMessage();
-		$this->Date = new Date();
+		$this->Date         = new Date();
 	}
 
 	/**
@@ -79,36 +79,42 @@ class Message {
 
 	/**
 	 * Получить предпоследнее сообщение
+	 *
 	 * @return array
 	 */
-	public function getLastMessage() : array {
+	public function getLastMessage () : array {
 		$Message = $this->getModelMessage()->lastMessage($this->getUser(), $this->getChat());
 		return $Message ? $this->message($Message) : [];
 	}
 
 	/**
 	 * Количество всех сообщений
+	 *
 	 * @return int
 	 */
-	public function countMessage() : int {
+	public function countMessage () : int {
 		return $this->getModelMessage()->countMessage($this->getUser(), $this->getChat());
 	}
 
 	/**
 	 * Получить n - количество последних сообщений
+	 *
 	 * @param int $limit
 	 * @return array
 	 */
-	public function lastMessage(int $limit = 5) : array {
+	public function lastMessage (int $limit = 5) : array {
 		if ($limit <= 0)
 			$limit = 5;
 
 		$messages = $this->getModelMessage()->lastMessages($this->getUser(), $this->getChat(), $limit);
-		return $messages ? $this->messages($messages) : ['message' => [], 'messageStr' => 'У Вас нет не одного сообщения!'];
+		return $messages ? $this->messages($messages) : ['message'    => [],
+		                                                 'messageStr' => 'У Вас нет не одного сообщения!'
+		];
 	}
 
 	/**
 	 * Перебор всех сообщений
+	 *
 	 * @param Collection $messages
 	 * @return array
 	 */
@@ -116,9 +122,9 @@ class Message {
 		$arMessages = [];
 		$messageStr = 'Сообщении: ';
 		foreach ($messages as $Message) {
-			$message = $this->message($Message);
+			$message                 = $this->message($Message);
 			$arMessages['message'][] = $message;
-			$messageStr .= "{$message['nickname']}\n{$message['message']}\n{$this->getDate()->fullDataFormat($message['date'])}\n";
+			$messageStr              .= "{$message['nickname']}\n{$message['message']}\n{$this->getDate()->fullDataFormat($message['date'])}\n";
 		}
 
 		$arMessages['messageStr'] = $messageStr;
@@ -128,16 +134,17 @@ class Message {
 
 	/**
 	 * Формирования массива
+	 *
 	 * @param stdClass $Message
 	 * @return array
 	 */
 	private function message (stdClass $Message) : array {
 		return [
-			'user' => $Message->user_id,
-			'chat' => $Message->chat_id,
+			'user'     => $Message->user_id,
+			'chat'     => $Message->chat_id,
 			'nickname' => $Message->nickname,
-			'message' => $Message->message,
-			'date' => $Message->created_at,
+			'message'  => $Message->message,
+			'date'     => $Message->created_at,
 		];
 	}
 

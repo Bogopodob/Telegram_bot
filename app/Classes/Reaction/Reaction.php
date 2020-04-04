@@ -12,7 +12,7 @@ class Reaction {
 
 	public function __construct (int $user, int $chat) {
 		$this->Message = new Message($user, $chat);
-		$this->Date = new Date();
+		$this->Date    = new Date();
 	}
 
 	/**
@@ -45,6 +45,7 @@ class Reaction {
 
 	/**
 	 * Получение реакции
+	 *
 	 * @param string $nicknameOrName
 	 * @param string $message
 	 * @return null|string
@@ -63,6 +64,7 @@ class Reaction {
 
 	/**
 	 * Реакция на сообщение "Привет"
+	 *
 	 * @param string $nicknameOrName
 	 * @param string $message
 	 * @return null|string
@@ -72,7 +74,7 @@ class Reaction {
 			return NULL;
 
 		$arMessage = $this->getMessage()->getLastMessage();
-		$date = 'так как Вы еще не писали сообщений я не могу сказать дату последнего сообщения';
+		$date      = 'так как Вы еще не писали сообщений я не могу сказать дату последнего сообщения';
 		if ($arMessage)
 			$date = 'последний раз ты писал мне ' . $this->getDate()->fullDataFormat($arMessage['date']);
 
@@ -82,6 +84,7 @@ class Reaction {
 
 	/**
 	 * Реакция на сообщение "Пока"
+	 *
 	 * @param string $nicknameOrName
 	 * @param string $message
 	 * @return null|string

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Classes\Command;
 
 use App\Classes\Message\Message;
@@ -29,10 +30,11 @@ class Command {
 
 	/**
 	 * Общая функция обработки команд
+	 *
 	 * @param string $command
 	 * @return null|string
 	 */
-	public function getCommand(string $command) :? string {
+	public function getCommand (string $command) :? string {
 		$cLast = $this->commandLast($command);
 		if ($cLast)
 			return $cLast;
@@ -50,6 +52,7 @@ class Command {
 
 	/**
 	 * Команда /last n - число сообщений которые нужно вывести
+	 *
 	 * @param string $command
 	 * @return null|string
 	 */
@@ -64,6 +67,7 @@ class Command {
 
 	/**
 	 * Команда /start запускает работу бота
+	 *
 	 * @param string $command
 	 * @return null|string
 	 */
@@ -79,6 +83,7 @@ class Command {
 	 * Данное регулярное выражение может принимать строку в виде:
 	 * /div(5.4,*,8.4) ответ, массив значений из 4 элементов [/div(5.4,*,8.4), 5.4, *, 8.4];
 	 * /div(5.4,8.4) ответ, массив из 5 элементов [/div(5.4,*,8.4), 5.4, '', '', 8.4];
+	 *
 	 * @param string $command
 	 * @return null|string
 	 */
@@ -98,6 +103,7 @@ class Command {
 
 	/**
 	 * Удаление пробелов
+	 *
 	 * @param string $string
 	 * @param string $spaces
 	 * @return string
@@ -108,12 +114,13 @@ class Command {
 
 	/**
 	 * Общая функция обработки математический операций
+	 *
 	 * @param string $symbol
 	 * @param float  $numberOne
 	 * @param float  $numberTwo
 	 * @return null|string
 	 */
-	public function mathOperations(string $symbol, float $numberOne, float $numberTwo) :? string {
+	public function mathOperations (string $symbol, float $numberOne, float $numberTwo) :? string {
 		if ($symbol === '+')
 			return $this->plus($numberOne, $numberTwo);
 
@@ -131,6 +138,7 @@ class Command {
 
 	/**
 	 * Плюс
+	 *
 	 * @param float $numberOne
 	 * @param float $numberTwo
 	 * @return string
@@ -141,6 +149,7 @@ class Command {
 
 	/**
 	 * Минус
+	 *
 	 * @param float $numberOne
 	 * @param float $numberTwo
 	 * @return string
@@ -151,6 +160,7 @@ class Command {
 
 	/**
 	 * Умножения
+	 *
 	 * @param float $numberOne
 	 * @param float $numberTwo
 	 * @return string
@@ -161,6 +171,7 @@ class Command {
 
 	/**
 	 * Деления
+	 *
 	 * @param float $numberOne
 	 * @param float $numberTwo
 	 * @return string
@@ -171,13 +182,14 @@ class Command {
 
 	/**
 	 * Форматирования чисел (25,569.00)
+	 *
 	 * @param        $number
 	 * @param int    $balance
 	 * @param string $balanceSymbol
 	 * @param string $numberSymbol
 	 * @return string
 	 */
-	private function numberFormat($number, $balance = 2, $balanceSymbol = '.', $numberSymbol = ',') : string {
+	private function numberFormat ($number, $balance = 2, $balanceSymbol = '.', $numberSymbol = ',') : string {
 		return number_format($number, $balance, $balanceSymbol, $numberSymbol);
 	}
 
