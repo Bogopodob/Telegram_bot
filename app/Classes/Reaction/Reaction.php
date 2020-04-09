@@ -172,7 +172,7 @@ class Reaction {
 		if (!preg_match('/^Math$/ui', $message))
 			return NULL;
 
-		return "@$nicknameOrName, возможно Вы имели команду /math?";
+		return "@$nicknameOrName, возможно Вы имели в виду команду /math?";
 	}
 
 	/**
@@ -184,7 +184,7 @@ class Reaction {
 		if (!preg_match('/^Math$/ui', $message))
 			return NULL;
 
-		return "@$nicknameOrName, возможно Вы имели команду /last?";
+		return "@$nicknameOrName, возможно Вы имели в виду команду /last?";
 	}
 
 	/**
@@ -196,7 +196,7 @@ class Reaction {
 		if (!preg_match('/^Math$/ui', $message))
 			return NULL;
 
-		return "@$nicknameOrName, возможно Вы имели команду /help?";
+		return "@$nicknameOrName, возможно Вы имели в виду команду /help?";
 	}
 
 	/**
@@ -208,6 +208,6 @@ class Reaction {
 		if (!preg_match('/^Math$/ui', $message))
 			return NULL;
 
-		return "@$nicknameOrName, возможно Вы имели команду /start?";
+		return "@$nicknameOrName, возможно Вы имели в виду команду /start?";
 	}
 }
