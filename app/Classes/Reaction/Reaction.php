@@ -80,6 +80,22 @@ class Reaction {
 		if ($rMath)
 			return $rMath;
 
+		$cMath = $this->reactionCommandMath($nicknameOrName, $message);
+		if ($cMath)
+			return $cMath;
+
+		$cLast = $this->reactionCommandLast($nicknameOrName, $message);
+		if ($cLast)
+			return $cLast;
+
+		$cHelp = $this->reactionCommandHelp($nicknameOrName, $message);
+		if ($cHelp)
+			return $cHelp;
+
+		$cStart = $this->reactionCommandStart($nicknameOrName, $message);
+		if ($cStart)
+			return $cStart;
+
 		return NULL;
 	}
 
@@ -145,5 +161,53 @@ class Reaction {
 		$symbol    = (string)$mMath[2];
 		return $this->getStringFormat()->numberFormat($this->getCommand()->mathOperations($symbol, $numberOne,
 			$numberTwo), $precision);
+	}
+
+	/**
+	 * @param string $nicknameOrName
+	 * @param string $message
+	 * @return null|string
+	 */
+	private function reactionCommandMath (string $nicknameOrName, string $message) :? string {
+		if (!preg_match('/^Math$/ui', $message))
+			return NULL;
+
+		return "@$nicknameOrName, возможно Вы имели команду /math?";
+	}
+
+	/**
+	 * @param string $nicknameOrName
+	 * @param string $message
+	 * @return null|string
+	 */
+	private function reactionCommandLast (string $nicknameOrName, string $message) :? string {
+		if (!preg_match('/^Math$/ui', $message))
+			return NULL;
+
+		return "@$nicknameOrName, возможно Вы имели команду /last?";
+	}
+
+	/**
+	 * @param string $nicknameOrName
+	 * @param string $message
+	 * @return null|string
+	 */
+	private function reactionCommandHelp (string $nicknameOrName, string $message) :? string {
+		if (!preg_match('/^Math$/ui', $message))
+			return NULL;
+
+		return "@$nicknameOrName, возможно Вы имели команду /help?";
+	}
+
+	/**
+	 * @param string $nicknameOrName
+	 * @param string $message
+	 * @return null|string
+	 */
+	private function reactionCommandStart (string $nicknameOrName, string $message) :? string {
+		if (!preg_match('/^Math$/ui', $message))
+			return NULL;
+
+		return "@$nicknameOrName, возможно Вы имели команду /start?";
 	}
 }
