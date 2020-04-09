@@ -127,10 +127,10 @@ class Command {
 		else if ($symbol === '-')
 			return $this->minus($numberOne, $numberTwo);
 
-		else if ($symbol === '*')
+		else if ($symbol === '*' || $symbol === '×')
 			return $this->multiply($numberOne, $numberTwo);
 
-		else if ($symbol === '/')
+		else if ($symbol === '/' || $symbol === '÷')
 			return $this->division($numberOne, $numberTwo);
 
 		return NULL;
