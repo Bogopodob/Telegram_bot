@@ -3,15 +3,32 @@
 namespace App\Classes\Command;
 
 use App\Classes\Message\Message;
+use App\Classes\Supporting\StringFormat;
 
 class Command {
 
 	protected $Message;
 	protected $user;
 	protected $chat;
+	protected $StringFormat;
 
 	public function __construct (int $user, int $chat) {
-		$this->Message = new Message($user, $chat);
+		$this->Message      = new Message($user, $chat);
+		$this->StringFormat = new StringFormat();
+	}
+
+	/**
+	 * @return StringFormat
+	 */
+	public function getStringFormat () : StringFormat {
+		return $this->StringFormat;
+	}
+
+	/**
+	 * @param StringFormat $StringFormat
+	 */
+	public function setStringFormat (StringFormat $StringFormat) {
+		$this->StringFormat = $StringFormat;
 	}
 
 	/**
@@ -47,6 +64,10 @@ class Command {
 		if ($cStart)
 			return $cStart;
 
+		$cHelp = $this->commandHelp($command);
+		if ($cHelp)
+			return $cHelp;
+
 		return 'Данная команда не существует!';
 	}
 
@@ -57,7 +78,7 @@ class Command {
 	 * @return null|string
 	 */
 	private function commandLast (string $command) :? string {
-		$command = $this->deleteSpaces($command, '');
+		$command = $this->getStringFormat()->deleteSpaces($command, '');
 		if (!preg_match('/^\/last?:\s+|(\d+)$/ui', $command, $mLimit))
 			return NULL;
 
@@ -72,7 +93,7 @@ class Command {
 	 * @return null|string
 	 */
 	private function commandStart (string $command) :? string {
-		$command = $this->deleteSpaces($command, '');
+		$command = $this->getStringFormat()->deleteSpaces($command, '');
 		if (!preg_match('/^\/start$/ui', $command))
 			return NULL;
 
@@ -82,33 +103,33 @@ class Command {
 	/**
 	 * Данное регулярное выражение может принимать строку в виде:
 	 * /math(5,4*8.4) ответ, массив значений из 4 элементов [/div(5,4*8.4), 5.4, *, 8.4];
+	 * Дробные числа могут идти как с , так и с .
 	 *
 	 * @param string $command
 	 * @return null|string
 	 */
 	private function commandMath (string $command) :? string {
-		$command = $this->deleteSpaces($command, '');
-		if (!preg_match('/^\/math\((\d+|\d+(?:\.|\,)\d+)(?:(\*|\+|\/|\-|\×|\÷))(\d+|\d+(?:\.|\,)\d+)\)$/ui', $command, $mResult))
+		$command = $this->getStringFormat()->deleteSpaces($command, '');
+		if (!preg_match('/^\/math\((\d+|\d+(?:\.|\,)\d+)(?:(\*|\+|\/|\-|\×|\÷))(\d+|\d+(?:\.|\,)\d+)\)$/ui', $command,
+			$mResult))
 			return NULL;
 
 		if (\count($mResult) === 4)
-			return $this->mathOperations((string)$mResult[2], (float)$mResult[1], (float)$mResult[3]);
-
-		else if (\count($mResult) === 5)
-			return $this->mathOperations('/', (float)$mResult[1], (float)$mResult[4]);
+			return (string)$this->mathOperations((string)$mResult[2], (float)$mResult[1], (float)$mResult[3]);
 
 		return NULL;
 	}
 
 	/**
-	 * Удаление пробелов
-	 *
-	 * @param string $string
-	 * @param string $spaces
-	 * @return string
+	 * @param string $command
+	 * @return null|string
 	 */
-	private function deleteSpaces (string $string, string $spaces = ' ') : string {
-		return $string ? preg_replace('/\s+/', $spaces, $string) : '';
+	private function commandHelp (string $command) :? string {
+		$command = $this->$this->getStringFormat()->deleteSpaces($command, '');
+		if (!preg_match('/^\/help$/ui', $command, $mLimit))
+			return NULL;
+
+		return "Основные комманды:\n /last n список последних сообщений.\n /math(x*y) знак * математическая операция \n\n **********************\n\n Инструкция по использованию:\n /last n - где n - чисто последних сообщений, n не обязательный параметр, по умолчанию показывает 5 последних сообщений (пример: /last 5). \n math(x,*,y) где x - первая цифра, y - вторая цифра, * - математическая операция (/, *, -, +), пример: /math(5+8). \n !!Но можно пользоваться и без команды /math. x*y -p n где где x - первая цифра, y - вторая цифра, * - математическая операция (/, *, -, +), n - округление числа после запятой, пример 5+9-p 5!!";
 	}
 
 	/**
@@ -117,9 +138,9 @@ class Command {
 	 * @param string $symbol
 	 * @param float  $numberOne
 	 * @param float  $numberTwo
-	 * @return null|string
+	 * @return null|float
 	 */
-	public function mathOperations (string $symbol, float $numberOne, float $numberTwo) :? string {
+	public function mathOperations (string $symbol, float $numberOne, float $numberTwo) :? float {
 		if ($symbol === '+')
 			return $this->plus($numberOne, $numberTwo);
 
@@ -140,10 +161,10 @@ class Command {
 	 *
 	 * @param float $numberOne
 	 * @param float $numberTwo
-	 * @return string
+	 * @return float
 	 */
-	private function plus (float $numberOne, float $numberTwo) : string {
-		return $this->numberFormat($numberOne + $numberTwo);
+	private function plus (float $numberOne, float $numberTwo) : float {
+		return $numberOne + $numberTwo;
 	}
 
 	/**
@@ -151,10 +172,10 @@ class Command {
 	 *
 	 * @param float $numberOne
 	 * @param float $numberTwo
-	 * @return string
+	 * @return float
 	 */
-	private function minus (float $numberOne, float $numberTwo) : string {
-		return $this->numberFormat($numberOne - $numberTwo);
+	private function minus (float $numberOne, float $numberTwo) : float {
+		return $numberOne - $numberTwo;
 	}
 
 	/**
@@ -162,10 +183,10 @@ class Command {
 	 *
 	 * @param float $numberOne
 	 * @param float $numberTwo
-	 * @return string
+	 * @return float
 	 */
-	private function multiply (float $numberOne, float $numberTwo) : string {
-		return $this->numberFormat($numberOne * $numberTwo);
+	private function multiply (float $numberOne, float $numberTwo) : float {
+		return $numberOne * $numberTwo;
 	}
 
 	/**
@@ -173,23 +194,10 @@ class Command {
 	 *
 	 * @param float $numberOne
 	 * @param float $numberTwo
-	 * @return string
+	 * @return float
 	 */
-	private function division (float $numberOne, float $numberTwo) : string {
-		return $numberTwo ? $this->numberFormat($numberOne / $numberTwo) : 'Деление на ноль невозможно';
-	}
-
-	/**
-	 * Форматирования чисел (25,569.00)
-	 *
-	 * @param        $number
-	 * @param int    $balance
-	 * @param string $balanceSymbol
-	 * @param string $numberSymbol
-	 * @return string
-	 */
-	private function numberFormat ($number, $balance = 2, $balanceSymbol = '.', $numberSymbol = ',') : string {
-		return number_format($number, $balance, $balanceSymbol, $numberSymbol);
+	private function division (float $numberOne, float $numberTwo) : float {
+		return $numberTwo ? $numberOne / $numberTwo : 'Деление на ноль невозможно';
 	}
 
 }
