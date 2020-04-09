@@ -81,15 +81,14 @@ class Command {
 
 	/**
 	 * Данное регулярное выражение может принимать строку в виде:
-	 * /div(5.4,*,8.4) ответ, массив значений из 4 элементов [/div(5.4,*,8.4), 5.4, *, 8.4];
-	 * /div(5.4,8.4) ответ, массив из 5 элементов [/div(5.4,*,8.4), 5.4, '', '', 8.4];
+	 * /math(5,4*8.4) ответ, массив значений из 4 элементов [/div(5,4*8.4), 5.4, *, 8.4];
 	 *
 	 * @param string $command
 	 * @return null|string
 	 */
 	private function commandMath (string $command) :? string {
 		$command = $this->deleteSpaces($command, '');
-		if (!preg_match('/^\/math\((\d+|\d+\.\d+),(?:(.)\,(\d+|\d+\.\d+)|(\d+|\d+\.\d+))\)$/ui', $command, $mResult))
+		if (!preg_match('/^\/math\((\d+|\d+(?:\.|\,)\d+)(?:(\*|\+|\/|\-|\×|\÷))(\d+|\d+(?:\.|\,)\d+)\)$/ui', $command, $mResult))
 			return NULL;
 
 		if (\count($mResult) === 4)
