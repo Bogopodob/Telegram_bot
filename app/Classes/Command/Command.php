@@ -110,7 +110,10 @@ class Command {
 	 */
 	private function commandMath (string $command) :? string {
 		$command = $this->getStringFormat()->deleteSpaces($command, '');
-		if (!preg_match('/^\/math\((\d+|\d+(?:\.|\,)\d+)(?:(\*|\+|\/|\-|\×|\÷))(\d+|\d+(?:\.|\,)\d+)\)$/ui', $command,
+		if (preg_match('/^\/math$/ui', $command))
+			return 'Пример использование команды /math(3.54*69.41)';
+
+		else if (!preg_match('/^\/math\((\d+|\d+(?:\.|\,)\d+)(?:(\*|\+|\/|\-|\×|\÷))(\d+|\d+(?:\.|\,)\d+)\)$/ui', $command,
 			$mResult))
 			return NULL;
 
