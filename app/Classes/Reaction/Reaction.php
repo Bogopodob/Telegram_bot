@@ -2,31 +2,48 @@
 
 namespace App\Classes\Reaction;
 
-use App\Classes\Date;
-use App\Classes\Message\Message;
+use App\Classes\Command\Command;
+use App\Classes\Supporting\Date;
+use App\Classes\Supporting\StringFormat;
 
 class Reaction {
 
-	protected $Message;
+	protected $Command;
 	protected $Date;
+	protected $StringFormat;
 
 	public function __construct (int $user, int $chat) {
-		$this->Message = new Message($user, $chat);
-		$this->Date    = new Date();
+		$this->Command      = new Command($user, $chat);
+		$this->Date         = new Date();
+		$this->StringFormat = new StringFormat();
 	}
 
 	/**
-	 * @return Message
+	 * @return StringFormat
 	 */
-	public function getMessage () : Message {
-		return $this->Message;
+	public function getStringFormat () : StringFormat {
+		return $this->StringFormat;
 	}
 
 	/**
-	 * @param Message $Message
+	 * @param StringFormat $StringFormat
 	 */
-	public function setMessage (Message $Message) {
-		$this->Message = $Message;
+	public function setStringFormat (StringFormat $StringFormat) {
+		$this->StringFormat = $StringFormat;
+	}
+
+	/**
+	 * @return Command
+	 */
+	public function getCommand () : Command {
+		return $this->Command;
+	}
+
+	/**
+	 * @param Command $Command
+	 */
+	public function setCommand (Command $Command) {
+		$this->Command = $Command;
 	}
 
 	/**
@@ -59,6 +76,10 @@ class Reaction {
 		if ($rBye)
 			return $rBye;
 
+		$rMath = $this->reactionMath($message);
+		if ($rMath)
+			return $rMath;
+
 		return NULL;
 	}
 
@@ -73,7 +94,7 @@ class Reaction {
 		if (!preg_match('/^привет$/ui', $message))
 			return NULL;
 
-		$arMessage = $this->getMessage()->getLastMessage();
+		$arMessage = $this->getCommand()->getMessage()->getLastMessage();
 		$date      = 'так как Вы еще не писали сообщений я не могу сказать дату последнего сообщения';
 		if ($arMessage)
 			$date = 'последний раз ты писал мне ' . $this->getDate()->fullDataFormat($arMessage['date']);
@@ -93,6 +114,36 @@ class Reaction {
 		if (!preg_match('/^Пока$/ui', $message))
 			return NULL;
 
-		return 'Пока @' . $nicknameOrName . ', будем ждать Вас снова, вы уже написали ' . $this->getMessage()->countMessage() . ' сообщений.';
+		return 'Пока @' . $nicknameOrName . ', будем ждать Вас снова, вы уже написали ' . $this->getCommand()->getMessage()->countMessage() . ' сообщений.';
+	}
+
+	/**
+	 * Ищет текст формата 56*87 -p 5 Где -p показать остаток после нуля
+	 * Дробные числа могут идти как с , так и с .
+	 *
+	 * @param string $message
+	 * @return null|string
+	 */
+	private function reactionMath (string $message) :? string {
+		$math = $this->$this->getStringFormat()->deleteSpaces($message, '');
+		if (!preg_match('/(\d+|\d+(?:\.|\,)\d+)(\*|\+|\/|\-|\×|\÷)(\d+|\d+(?:\.|\,)\d+)(?:$|\-p(\d+))/ui', $math,
+			$mMath))
+			return NULL;
+
+		$precision = NULL;
+		if (\count($mMath) === 5)
+			$precision = (int)$mMath[4];
+
+		if (\count($mMath) === 4)
+			$precision = 2;
+
+		if ($precision === NULL)
+			return NULL;
+
+		$numberOne = (float)$this->getStringFormat()->replaceSymbol(',', '.', $mMath[1]);
+		$numberTwo = (float)$this->getStringFormat()->replaceSymbol(',', '.', $mMath[3]);
+		$symbol    = (string)$mMath[2];
+		return $this->getStringFormat()->numberFormat($this->getCommand()->mathOperations($symbol, $numberOne,
+			$numberTwo), $precision);
 	}
 }
