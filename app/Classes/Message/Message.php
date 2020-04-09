@@ -2,7 +2,7 @@
 
 namespace App\Classes\Message;
 
-use App\Classes\Date;
+use App\Classes\Supporting\Date;
 use App\Models\Message\Message as ModelMessage;
 use Illuminate\Support\Collection;
 use stdClass;
@@ -107,8 +107,9 @@ class Message {
 			$limit = 5;
 
 		$messages = $this->getModelMessage()->lastMessages($this->getUser(), $this->getChat(), $limit);
-		return $messages ? $this->messages($messages) : ['message'    => [],
-		                                                 'messageStr' => 'У Вас нет не одного сообщения!'
+		return $messages ? $this->messages($messages) : [
+			'message'    => [],
+			'messageStr' => 'У Вас нет не одного сообщения!'
 		];
 	}
 
