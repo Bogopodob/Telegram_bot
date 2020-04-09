@@ -2,6 +2,8 @@
 
 namespace App\Classes\Answer;
 
+use Couchbase\Exception;
+
 class Answer {
 
 	const TOKEN = '1113630730:AAGoTlQDqb9EncCzJBd6WlxSHzl_CPP3Ll8';
@@ -70,5 +72,43 @@ class Answer {
 		$response = json_decode($response, TRUE);
 
 		return $response['result'];
+	}
+
+	/**
+	 * Переводчик
+	 *
+	 * @param string $text
+	 * @param string $language
+	 * @return null|string
+	 * @throws Exception
+	 */
+	public function translator (string $text, string $language) : ? string {
+
+		$url = 'https://translate.yandex.net/api/v1.5/tr.json/translate?' . http_build_query([
+				'key' => 'trnsl.1.1.20200409T200847Z.48b4d30e03804665.0c07b5438785a3bf0fce5808bb76a3d0ab89545a',
+				'text' => $text,
+				'lang'    => 'ru-'.$language,
+				'format' => 'plain',
+				'options' => 1,
+			]);
+
+		$curlObject = curl_init();
+
+		curl_setopt($curlObject, CURLOPT_URL, $url);
+
+		curl_setopt($curlObject, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($curlObject, CURLOPT_SSL_VERIFYHOST, false);
+
+		curl_setopt($curlObject, CURLOPT_RETURNTRANSFER, true);
+
+		$responseData = curl_exec($curlObject);
+
+		curl_close($curlObject);
+
+		if ($responseData === false) {
+			throw new Exception('Response false');
+		}
+
+		return $responseData;
 	}
 }
