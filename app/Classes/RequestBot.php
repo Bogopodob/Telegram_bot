@@ -92,7 +92,7 @@ class RequestBot {
 		else $nicknameOrName = $request['message']['from']['username'];
 
 		$Reaction = new Reaction($user, $chat);
-		$Reaction->getMessage()->getModelMessage()->create($user, $chat, $nicknameOrName, $message);
+		$Reaction->getCommand()->getMessage()->getModelMessage()->create($user, $chat, $nicknameOrName, $message);
 
 		// Для тестирования
 		//		return $Reaction->getReaction($nicknameOrName, $message);
