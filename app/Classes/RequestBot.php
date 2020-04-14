@@ -66,11 +66,12 @@ class RequestBot {
 
 			// Для тестирования
 			//			return 'send';
-			return $this->getAnswer()->tgSend($chat, 'Здравствуйте, Вы начали использовать бота!', TRUE);
+			$this->getAnswer()->tgSend($chat, 'Здравствуйте, Вы начали использовать бота!', TRUE);
 
 		// Для тестирования
 		//		return $send;
-		return $this->getAnswer()->tgSend($chat, $send);
+		$this->getAnswer()->tgSend($chat, $send);
+		return 'ok';
 	}
 
 	/**
@@ -96,6 +97,7 @@ class RequestBot {
 
 		// Для тестирования
 		//		return $Reaction->getReaction($nicknameOrName, $message);
-		return $this->getAnswer()->tgSend($chat, $Reaction->getReaction($nicknameOrName, $message));
+		$this->getAnswer()->tgSend($chat, $Reaction->getReaction($nicknameOrName, $message));
+		return 'ok';
 	}
 }
