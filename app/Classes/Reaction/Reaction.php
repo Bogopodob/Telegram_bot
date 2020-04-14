@@ -141,7 +141,7 @@ class Reaction {
 	 * @return null|string
 	 */
 	private function reactionMath (string $message) :? string {
-		$math = $this->$this->getStringFormat()->deleteSpaces($message, '');
+		$math = $this->getStringFormat()->deleteSpaces($message, '');
 		if (!preg_match('/(\d+|\d+(?:\.|\,)\d+)(\*|\+|\/|\-|\×|\÷)(\d+|\d+(?:\.|\,)\d+)(?:$|\-p(\d+))/ui', $math,
 			$mMath))
 			return NULL;
@@ -181,7 +181,7 @@ class Reaction {
 	 * @return null|string
 	 */
 	private function reactionCommandLast (string $nicknameOrName, string $message) :? string {
-		if (!preg_match('/^Math$/ui', $message))
+		if (!preg_match('/^last$/ui', $message))
 			return NULL;
 
 		return "@$nicknameOrName, возможно Вы имели в виду команду /last?";
@@ -193,7 +193,7 @@ class Reaction {
 	 * @return null|string
 	 */
 	private function reactionCommandHelp (string $nicknameOrName, string $message) :? string {
-		if (!preg_match('/^Math$/ui', $message))
+		if (!preg_match('/^help$/ui', $message))
 			return NULL;
 
 		return "@$nicknameOrName, возможно Вы имели в виду команду /help?";
@@ -205,7 +205,7 @@ class Reaction {
 	 * @return null|string
 	 */
 	private function reactionCommandStart (string $nicknameOrName, string $message) :? string {
-		if (!preg_match('/^Math$/ui', $message))
+		if (!preg_match('/^start$/ui', $message))
 			return NULL;
 
 		return "@$nicknameOrName, возможно Вы имели в виду команду /start?";
