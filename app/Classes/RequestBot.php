@@ -32,9 +32,9 @@ class RequestBot {
 	 * Отправка сообщение в телеграм
 	 *
 	 * @param array $request
-	 * @return array|null
+	 * @return null|string
 	 */
-	public function request (array $request) :? array {
+	public function request (array $request) :? string {
 		$command = $this->requestCommand($request);
 		if ($command)
 			return $command;
@@ -50,9 +50,9 @@ class RequestBot {
 	 * Получение команд
 	 *
 	 * @param array $request
-	 * @return array|null
+	 * @return null|string
 	 */
-	private function requestCommand (array $request) :? array {
+	private function requestCommand (array $request) :? string {
 		if (!isset($request['message']['entities']))
 			return NULL;
 
@@ -77,9 +77,9 @@ class RequestBot {
 	 * Получения реакций
 	 *
 	 * @param array $request
-	 * @return array|null
+	 * @return null|string
 	 */
-	private function requestReaction (array $request) :? array {
+	private function requestReaction (array $request) :? string {
 		if (!isset($request['message']))
 			return NULL;
 
