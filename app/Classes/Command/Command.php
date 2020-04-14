@@ -82,7 +82,7 @@ class Command {
 		if (!preg_match('/^\/last?:\s+|(\d+)$/ui', $command, $mLimit))
 			return NULL;
 
-		$message = $this->getMessage()->lastMessage($mLimit[1]);
+		$message = $this->getMessage()->lastMessage((int)$mLimit[1]);
 		return $message['messageStr'];
 	}
 
@@ -128,7 +128,7 @@ class Command {
 	 * @return null|string
 	 */
 	private function commandHelp (string $command) :? string {
-		$command = $this->$this->getStringFormat()->deleteSpaces($command, '');
+		$command = $this->getStringFormat()->deleteSpaces($command, '');
 		if (!preg_match('/^\/help$/ui', $command, $mLimit))
 			return NULL;
 
