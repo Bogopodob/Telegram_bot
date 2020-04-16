@@ -5,6 +5,7 @@ namespace App\Classes\Reaction;
 use App\Classes\Command\Command;
 use App\Classes\Supporting\Date;
 use App\Classes\Supporting\StringFormat;
+use Illuminate\Support\Facades\Lang;
 
 class Reaction {
 
@@ -12,10 +13,11 @@ class Reaction {
 	protected $Date;
 	protected $StringFormat;
 
-	public function __construct (int $user, int $chat) {
+	public function __construct (int $user, int $chat, string $lang = 'ru') {
 		$this->Command      = new Command($user, $chat);
 		$this->Date         = new Date();
 		$this->StringFormat = new StringFormat();
+		Lang::setLocale($lang);
 	}
 
 	/**
@@ -66,6 +68,7 @@ class Reaction {
 	 * @param string $nicknameOrName
 	 * @param string $message
 	 * @return null|string
+	 * @throws \Exception
 	 */
 	public function getReaction (string $nicknameOrName = '', string $message) :? string {
 		$rHi = $this->reactionHi($nicknameOrName, $message);
@@ -107,7 +110,7 @@ class Reaction {
 	 * @return null|string
 	 */
 	private function reactionHi (string $nicknameOrName, string $message) :? string {
-		if (!preg_match('/^привет$/ui', $message))
+		if (!preg_match('/' . Lang::get('messages.hi') . '$/ui', $message))
 			return NULL;
 
 		$arMessage = $this->getCommand()->getMessage()->getLastMessage();
@@ -127,7 +130,7 @@ class Reaction {
 	 * @return null|string
 	 */
 	private function reactionBye (string $nicknameOrName, string $message) :? string {
-		if (!preg_match('/^Пока$/ui', $message))
+		if (!preg_match('/^' . Lang::get('messages.bye') . '$/ui', $message))
 			return NULL;
 
 		return 'Пока @' . $nicknameOrName . ', будем ждать Вас снова, вы уже написали ' . $this->getCommand()->getMessage()->countMessage() . ' сообщений.';
@@ -139,6 +142,7 @@ class Reaction {
 	 *
 	 * @param string $message
 	 * @return null|string
+	 * @throws \Exception
 	 */
 	private function reactionMath (string $message) :? string {
 		$math = $this->getStringFormat()->deleteSpaces($message, '');
@@ -159,8 +163,10 @@ class Reaction {
 		$numberOne = (float)$this->getStringFormat()->replaceSymbol(',', '.', $mMath[1]);
 		$numberTwo = (float)$this->getStringFormat()->replaceSymbol(',', '.', $mMath[3]);
 		$symbol    = (string)$mMath[2];
-		return $this->getStringFormat()->numberFormat($this->getCommand()->mathOperations($symbol, $numberOne,
-			$numberTwo), $precision);
+		$result    = $this->getCommand()->mathOperations($symbol, $numberOne, $numberTwo);
+
+		return !preg_match('/(\d+)/ui', $result) ? $result : $this->getStringFormat()->numberFormat($result,
+			$precision);
 	}
 
 	/**
