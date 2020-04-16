@@ -5,19 +5,16 @@ namespace App\Classes\Message;
 use App\Classes\Supporting\Date;
 use App\Models\Message\Message as ModelMessage;
 use Illuminate\Support\Collection;
-use stdClass;
 
 class Message {
 
 	protected $user;
 	protected $chat;
-	protected $ModelMessage;
 	protected $Date;
 
 	public function __construct (int $user, int $chat) {
 		$this->user         = $user;
 		$this->chat         = $chat;
-		$this->ModelMessage = new ModelMessage();
 		$this->Date         = new Date();
 	}
 
@@ -50,20 +47,6 @@ class Message {
 	}
 
 	/**
-	 * @return ModelMessage
-	 */
-	public function getModelMessage () : ModelMessage {
-		return $this->ModelMessage;
-	}
-
-	/**
-	 * @param ModelMessage $ModelMessage
-	 */
-	public function setModelMessage (ModelMessage $ModelMessage) {
-		$this->ModelMessage = $ModelMessage;
-	}
-
-	/**
 	 * @return Date
 	 */
 	public function getDate () : Date {
@@ -83,7 +66,7 @@ class Message {
 	 * @return array
 	 */
 	public function getLastMessage () : array {
-		$Message = $this->getModelMessage()->lastMessage($this->getUser(), $this->getChat());
+		$Message = ModelMessage::where('user_id', $this->getUser())->where('chat_id', $this->getChat())->latest('id_chat')->skip(1)->limit(1)->first();
 		return $Message ? $this->message($Message) : [];
 	}
 
@@ -93,7 +76,7 @@ class Message {
 	 * @return int
 	 */
 	public function countMessage () : int {
-		return $this->getModelMessage()->countMessage($this->getUser(), $this->getChat());
+		return ModelMessage::where('user_id', $this->getUser())->where('chat_id', $this->getChat())->count();
 	}
 
 	/**
@@ -106,7 +89,8 @@ class Message {
 		if ($limit <= 0)
 			$limit = 5;
 
-		$messages = $this->getModelMessage()->lastMessages($this->getUser(), $this->getChat(), $limit);
+		$messages = ModelMessage::where('user_id', $this->getUser())->where('chat_id',
+			$this->getChat())->latest()->skip(0)->limit($limit)->get();
 		return $messages ? $this->messages($messages) : [
 			'message'    => [],
 			'messageStr' => 'У Вас нет не одного сообщения!'
@@ -136,10 +120,10 @@ class Message {
 	/**
 	 * Формирования массива
 	 *
-	 * @param stdClass $Message
+	 * @param ModelMessage $Message
 	 * @return array
 	 */
-	private function message (stdClass $Message) : array {
+	private function message (ModelMessage $Message) : array {
 		return [
 			'user'     => $Message->user_id,
 			'chat'     => $Message->chat_id,
