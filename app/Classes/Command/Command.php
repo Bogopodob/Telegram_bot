@@ -4,6 +4,7 @@ namespace App\Classes\Command;
 
 use App\Classes\Message\Message;
 use App\Classes\Supporting\StringFormat;
+use Exception;
 
 class Command {
 
@@ -50,6 +51,7 @@ class Command {
 	 *
 	 * @param string $command
 	 * @return null|string
+	 * @throws \Exception
 	 */
 	public function getCommand (string $command) :? string {
 		$cLast = $this->commandLast($command);
@@ -107,18 +109,19 @@ class Command {
 	 *
 	 * @param string $command
 	 * @return null|string
+	 * @throws \Exception
 	 */
 	private function commandMath (string $command) :? string {
 		$command = $this->getStringFormat()->deleteSpaces($command, '');
 		if (preg_match('/^\/math$/ui', $command))
 			return 'Пример использование команды /math(3.54*69.41)';
 
-		else if (!preg_match('/^\/math\((\d+|\d+(?:\.|\,)\d+)(?:(\*|\+|\/|\-|\×|\÷))(\d+|\d+(?:\.|\,)\d+)\)$/ui', $command,
-			$mResult))
+		else if (!preg_match('/^\/math\((\d+|\d+(?:\.|\,)\d+)(?:(\*|\+|\/|\-|\×|\÷))(\d+|\d+(?:\.|\,)\d+)\)$/ui',
+			$command, $mResult))
 			return NULL;
 
 		if (\count($mResult) === 4)
-			return (string)$this->mathOperations((string)$mResult[2], (float)$mResult[1], (float)$mResult[3]);
+			return $this->mathOperations((string)$mResult[2], (float)$mResult[1], (float)$mResult[3]);
 
 		return NULL;
 	}
@@ -141,55 +144,28 @@ class Command {
 	 * @param string $symbol
 	 * @param float  $numberOne
 	 * @param float  $numberTwo
-	 * @return null|float
+	 * @return string
+	 * @throws Exception
 	 */
-	public function mathOperations (string $symbol, float $numberOne, float $numberTwo) :? float {
+	public function mathOperations (string $symbol, float $numberOne, float $numberTwo) : string {
 		if ($symbol === '+')
-			return $this->plus($numberOne, $numberTwo);
+			return $numberOne + $numberTwo;
 
 		else if ($symbol === '-')
-			return $this->minus($numberOne, $numberTwo);
+			return $numberOne - $numberTwo;
 
 		else if ($symbol === '*' || $symbol === '×')
-			return $this->multiply($numberOne, $numberTwo);
+			return $numberOne * $numberTwo;
 
-		else if ($symbol === '/' || $symbol === '÷')
-			return $this->division($numberOne, $numberTwo);
+		try {
+			if ($symbol === '/' || $symbol === '÷')
+				return $this->division($numberOne, $numberTwo);
 
-		return NULL;
-	}
+		} catch (Exception $e) {
+			return $e->getMessage();
+		}
 
-	/**
-	 * Плюс
-	 *
-	 * @param float $numberOne
-	 * @param float $numberTwo
-	 * @return float
-	 */
-	private function plus (float $numberOne, float $numberTwo) : float {
-		return $numberOne + $numberTwo;
-	}
-
-	/**
-	 * Минус
-	 *
-	 * @param float $numberOne
-	 * @param float $numberTwo
-	 * @return float
-	 */
-	private function minus (float $numberOne, float $numberTwo) : float {
-		return $numberOne - $numberTwo;
-	}
-
-	/**
-	 * Умножения
-	 *
-	 * @param float $numberOne
-	 * @param float $numberTwo
-	 * @return float
-	 */
-	private function multiply (float $numberOne, float $numberTwo) : float {
-		return $numberOne * $numberTwo;
+		throw new Exception('Неизвестный символ!');
 	}
 
 	/**
@@ -198,9 +174,13 @@ class Command {
 	 * @param float $numberOne
 	 * @param float $numberTwo
 	 * @return float
+	 * @throws Exception
 	 */
 	private function division (float $numberOne, float $numberTwo) : float {
-		return $numberTwo ? $numberOne / $numberTwo : 'Деление на ноль невозможно';
+		if (!$numberTwo)
+			throw new Exception('Деление на ноль!');
+
+		return $numberOne / $numberTwo;
 	}
 
 }
